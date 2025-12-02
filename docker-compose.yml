@@ -3,8 +3,13 @@ services:
     container_name: MokaServer
     restart: always
     build:
-      context: server
+      context: .
       args:
         NODE_PORT: 3000
     ports:
       - 3000:3000
+    environment:
+      - NODE_OPTIONS=--dns-result-order=ipv4first
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4

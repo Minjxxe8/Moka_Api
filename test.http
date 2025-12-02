@@ -1,0 +1,14 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=WebStorm
+
+###
+POST http://localhost:3000/users/register
+Content-Type: application/json
+
+{
+  "username": "Jean Dupont",
+  "email": "jfdsdsjnfin",
+  "password": "MotDePasseTresSecret123"
+}
+
