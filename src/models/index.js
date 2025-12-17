@@ -5,6 +5,7 @@ const models = {};
 
 // Imports de Models
 models.User = require("./UserModel")(sequelize);
+models.Ingredient = require("./IngredientModel");
 
 
 Object.keys(models).forEach((modelName) => {

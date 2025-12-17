@@ -8,8 +8,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 const userRoutes = require("./src/routes/UserRoutes");
+const ingredientRoutes = require("./src/routes/IngredientRoutes");
 
 userRoutes(app);
+ingredientRoutes(app)
 
 // If route not found
 app.use((req, res) => {
