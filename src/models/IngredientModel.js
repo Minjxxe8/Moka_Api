@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = instance => {
-    const Ingredient = instance.define(
+    return instance.define(
         "Ingredient",
         {
             id: {

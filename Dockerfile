@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install, npm install dotenv, npm install sequelize, npm install express, npm install bcrypt
 
 COPY . .
 
