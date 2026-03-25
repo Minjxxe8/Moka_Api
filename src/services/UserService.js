@@ -35,6 +35,24 @@ class UserService {
         const { password_hash: _, ...userWithoutPassword } = newUser?.dataValues || newUser;
         return userWithoutPassword;
     }
+
+    async login(email, password) {
+        const user = await User.findOne({
+            where: { email },
+        });
+
+        if (!user) {
+            throw new Error("Invalid credentials");
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) {
+            throw new Error("Invalid credentials");
+        }
+
+        const { password_hash, ...userWithoutPassword } = user?.dataValues || user;
+        return { user: userWithoutPassword };
+    }
 }
 
 module.exports = new UserService();
