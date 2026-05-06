@@ -109,4 +109,23 @@ exports.deleteFollowers = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error deleting followers", error: error.message });
     }
+    exports.update = async (req, res) => {
+        try {
+            const { user_id, username, bio, avatar_url } = req.body;
+            const updated = await profileService.update(user_id, { username, bio, avatar_url });
+            res.status(200).json(updated);
+        } catch (error) {
+            res.status(500).json({ message: "Error updating Profile", error: error.message });
+        }
+    };
+
+    exports.getFollowing = async (req, res) => {
+        try {
+            const { user_id } = req.body;
+            const following = await profileService.getFollowing(user_id);
+            res.status(200).json(following);
+        } catch (error) {
+            res.status(500).json({ message: "Error fetching following", error: error.message });
+        }
+    };
 };
