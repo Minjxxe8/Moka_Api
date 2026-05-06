@@ -104,6 +104,29 @@ class ProfileService {
         await Follower.destroy({ where: { following_id: profile_id } });
         return { message: "All followers removed" };
     }
+    async update(user_id, data) {
+        const profile = await this.findByUserId(user_id);
+        if (!profile) throw new Error("Profile not found");
+
+        if (data.username) {
+            const existing = await this.findByUsername(data.username);
+            if (existing && existing.id !== profile.id) throw new Error("Username already taken");
+        }
+
+        await profile.update({
+            username: data.username || profile.username,
+            bio: data.bio ?? profile.bio,
+            avatar_url: data.avatar_url ?? profile.avatar_url,
+        });
+
+        return profile;
+    }
+
+    async getFollowing(user_id) {
+        const profile = await this.findByUserId(user_id);
+        if (!profile) throw new Error("Profile not found");
+        return await Follower.findAll({ where: { follower_id: profile.id } });
+    }
 }
 
 module.exports = new ProfileService();
