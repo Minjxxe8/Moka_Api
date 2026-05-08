@@ -1,4 +1,4 @@
-const { User } = require("../models/index");
+const { User, Fridge } = require("../models/index");
 const bcrypt = require('bcrypt');
 
 class UserService {
@@ -31,6 +31,11 @@ class UserService {
         });
 
         if (!newUser) throw new Error("Error creating new user");
+
+        await Fridge.create({
+            userId: newUser.id,
+            name: `Frigo de ${newUser.username}`
+        });
 
         const { password_hash: _, ...userWithoutPassword } = newUser?.dataValues || newUser;
         return userWithoutPassword;
