@@ -9,9 +9,11 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 const userRoutes = require("./src/routes/UserRoutes");
 const ingredientRoutes = require("./src/routes/IngredientRoutes");
+const fridgeRoutes = require("./src/routes/FridgeRoutes");
 
 userRoutes(app);
 ingredientRoutes(app)
+fridgeRoutes(app)
 
 // If route not found
 app.use((req, res) => {

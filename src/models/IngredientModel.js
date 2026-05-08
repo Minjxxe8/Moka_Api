@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = instance => {
-    return instance.define(
+    const Ingredient = instance.define(
         "Ingredient",
         {
             id: {
@@ -17,25 +17,32 @@ module.exports = instance => {
             },
             quantity_default: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
             },
             type: {
                 type: DataTypes.ENUM('fromagerie', 'viande', 'poisson', 'légume', 'fruit', 'pate_ble', 'épicerie'),
                 allowNull: false,
+                defaultValue: 'légume',
             },
-            unit_default: {
+            unite_default: {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            createdAt: {
+            created_at: {
                 type: DataTypes.DATE,
                 allowNull: false,
                 defaultValue: DataTypes.NOW,
             },
         },
         {
-            tableName: "ingredient",
-            timestamps: true,
+            tableName: "ingredients",
+            timestamps: false,
         }
     )
+
+    Ingredient.associate = (models) => {
+        Ingredient.hasMany(models.FridgeIngredient, { foreignKey: 'ingredients_id' });
+    };
+
+    return Ingredient;
 }
