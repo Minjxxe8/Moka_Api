@@ -5,15 +5,16 @@ module.exports = instance => {
         "Fridge",
         {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.BIGINT,
                 autoIncrement: true,
                 primaryKey: true,
                 allowNull: false,
             },
-            user_id: {
-                type: DataTypes.INTEGER,
+            userId: {
+                type: DataTypes.UUID,
                 allowNull: false,
                 unique: true,
+                field: 'users_id',
             },
             name: {
                 type: DataTypes.STRING,
@@ -28,15 +29,12 @@ module.exports = instance => {
         {
             tableName: "fridge",
             timestamps: false,
-
         }
     );
+
     Fridge.associate = (models) => {
         Fridge.hasMany(models.FridgeIngredient, { foreignKey: 'fridge_id' });
     };
 
     return Fridge;
 }
-
-
-

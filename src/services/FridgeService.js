@@ -1,4 +1,4 @@
-const { FridgeIngredient, Ingredient, User} = require('../models');
+const { FridgeIngredient, Ingredient, User, Fridge} = require('../models');
 
 class FridgeService {
     async findOne(userId) {
@@ -8,43 +8,27 @@ class FridgeService {
         return userWithoutPassword;
     }
 
+    async getFridgeByUserId(userId) {
+        const fridge = await Fridge.findOne({where: {users_id: userId}});
+        if (!fridge) throw new Error("Aucun frigo trouvé pour cet utilisateur");
+        return fridge;
+    }
+
     async addIngredientsToFridge(fridgeId, ingredientsList) {
+
         const results = [];
-
         for (const item of ingredientsList) {
-            let ingredient;
+            let ingredient = await Ingredient.findOne({ where: { name: item.name } });
 
-            ingredient = await Ingredient.findOne({ where: { name: item.name } });
-
-            if (!ingredient) {
-                ingredient = await Ingredient.create({
-                    name: item.name,
-                    type: item.type || 'épicerie',
-                    unite_default: item.unite || "unité"
-                });
-            }
-            let entry = await FridgeIngredient.findOne({
-                where: {
-                    fridge_id: fridgeId,
-                    ingredients_id: ingredient.id
-                }
+            const entry = await FridgeIngredient.create({
+                fridge_id: fridgeId,
+                ingredients_id: ingredient.id,
+                quantity: item.quantity || ingredient.quantity_default,
+                unite: item.unite || ingredient.unite_default,
+                type: ingredient.type,
+                expiry_date: item.expiry_date || null,
             });
-
-            if (entry) {
-                entry.quantity += item.quantity || 1;
-                await entry.save();
-                results.push(entry);
-            } else {
-                const newEntry = await FridgeIngredient.create({
-                    fridge_id: fridgeId,
-                    ingredients_id: ingredient.id,
-                    quantity: item.quantity || ingredient.quantity_default,
-                    unite: item.unite || ingredient.unite_default,
-                    type: ingredient.type,
-                    expiry_date: item.expiry_date || null
-                });
-                results.push(newEntry);
-            }
+            results.push(entry);
         }
         return results;
     }
