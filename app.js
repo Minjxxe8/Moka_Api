@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 const userRoutes = require("./src/routes/UserRoutes");
 const ingredientRoutes = require("./src/routes/IngredientRoutes");
 const fridgeRoutes = require("./src/routes/FridgeRoutes");
-const listsIngredientsRoutes = require("./src/routes/ListsIngredientsRoutes");
+const listsIngredientsRoutes = require("./src/routes/ListsRoutes");
 
 userRoutes(app);
 ingredientRoutes(app)

@@ -1,14 +1,14 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (instance) => {
-    const List = instance.define("List", {
+    const ListIngredients = instance.define("ListIngredients", {
         id: {
             type: DataTypes.BIGINT,
             autoIncrement: true,
             primaryKey: true
         },
-        user_id: {
-            type: DataTypes.UUID,
+        list_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         ingredients_id: {
@@ -25,10 +25,14 @@ module.exports = (instance) => {
         timestamps: false
     });
 
-    List.associate = (models) => {
-        List.belongsTo(models.User, { foreignKey: 'user_id' });
-        List.belongsTo(models.Ingredient, { foreignKey: 'ingredients_id' });
+    ListIngredients.associate = (models) => {
+        ListIngredients.belongsTo(models.Lists, { foreignKey: 'list_id' });
+        ListIngredients.belongsTo(models.Ingredient, {
+            foreignKey: 'ingredients_id',
+            as: 'Ingredient'
+        });
     };
 
-    return List;
+
+    return ListIngredients;
 };

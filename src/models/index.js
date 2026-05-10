@@ -9,6 +9,7 @@ models.Ingredient = require("./IngredientModel")(sequelize);
 models.Fridge = require("./FridgeModel")(sequelize);
 models.FridgeIngredient = require("./FridgeIngredientModel")(sequelize);
 models.ListsIngredients = require("./ListsIngredientsModel")(sequelize);
+models.Lists = require("./ListsModel")(sequelize);
 
 
 Object.keys(models).forEach((modelName) => {
