@@ -37,26 +37,18 @@ class UserService {
             name: `Frigo de ${newUser.username}`
         });
 
+
         const { password_hash: _, ...userWithoutPassword } = newUser?.dataValues || newUser;
         return userWithoutPassword;
     }
 
-    async login(email, password) {
-        const user = await User.findOne({
-            where: { email },
-        });
+    async deleteUser(userId) {
+        const user = await User.findByPk(userId);
+        if (!user) throw new Error("User not found");
 
-        if (!user) {
-            throw new Error("Invalid credentials");
-        }
+        await Fridge.destroy({ where: { users_id: userId } });
 
-        const isMatch = await bcrypt.compare(password, user.password_hash);
-        if (!isMatch) {
-            throw new Error("Invalid credentials");
-        }
-
-        const { password_hash, ...userWithoutPassword } = user?.dataValues || user;
-        return { user: userWithoutPassword };
+        return await user.destroy();
     }
 }
 

@@ -1,39 +1,35 @@
 const userService = require('../services/UserService');
+const authService = require('../services/AuthService');
 
 exports.register = async (req, res) => {
     try {
-        const { username, password, email } = req.body;
+        await userService.create(req.body);
+        const session = await authService.login(req.body.email, req.body.password);
 
-        const newUser = await userService.create({
-            username,
-            email,
-            password
+        res.status(201).json({
+            message: "User registered successfully",
+            ...session
         });
-        res.status(201).send({ message: "User registered successfully", user: newUser });
     } catch (error) {
-        res.status(500).send({
+        res.status(500).json({
             message: "Error creating register",
             error: error.message
         });
     }
 };
 
-exports.login = async (req, res) => {
+exports.deleteAccount = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const { user} = await userService.login(email, password);
+        const userId = req.userId;
 
-        res.status(200).send({
-            message: "Login successful",
-            user: {
-                username: user.username,
-                email: user.email
-            }
+        await userService.deleteUser(userId);
+
+        res.status(200).json({
+            message: "Votre compte et toutes vos données ont été supprimés avec succès."
         });
     } catch (error) {
-        const status = error.message === "Invalid credentials" ? 401 : 500;
-        res.status(status).send({
-            message: "Login failed",
+        res.status(500).json({
+            message: "Erreur lors de la suppression du compte",
             error: error.message
         });
     }

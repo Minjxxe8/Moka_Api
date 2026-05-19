@@ -1,12 +1,6 @@
 const { FridgeIngredient, Ingredient, User, Fridge} = require('../models');
 
 class FridgeService {
-    async findOne(userId) {
-        const user = await User.findOne({ where: { id: userId } });
-        if (!user) return null;
-        const { password_hash, ...userWithoutPassword } = user?.dataValues || user;
-        return userWithoutPassword;
-    }
 
     async getFridgeByUserId(userId) {
         const fridge = await Fridge.findOne({where: {users_id: userId}});
@@ -16,9 +10,15 @@ class FridgeService {
 
     async addIngredientsToFridge(fridgeId, ingredientsList) {
 
+
         const results = [];
         for (const item of ingredientsList) {
             let ingredient = await Ingredient.findOne({ where: { name: item.name } });
+
+            if (!ingredient) {
+                console.warn(`Ingrédient introuvable : ${item.name}, ignoré.`);
+                continue;
+            }
 
             const entry = await FridgeIngredient.create({
                 fridge_id: fridgeId,
@@ -56,8 +56,13 @@ class FridgeService {
         });
     }
 
-    async removeIngredientFromFridge(ingredientId) {
-        const entry = await FridgeIngredient.findOne({ where: { id: ingredientId } });
+    async removeIngredientFromFridge(fridgeId, ingredientId) {
+        const entry = await FridgeIngredient.findOne({
+            where: {
+                id: ingredientId,
+                fridge_id: fridgeId
+            }
+        });
 
         if (!entry) {
             return null;

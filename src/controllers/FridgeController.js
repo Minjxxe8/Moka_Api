@@ -2,14 +2,16 @@ const fridgeService = require('../services/FridgeService');
 
 exports.addIngredients = async (req, res) => {
     try {
-        const { fridgeId } = req.params;
+        const userId = req.userId;
         const { ingredients } = req.body;
 
         if (!ingredients || !Array.isArray(ingredients)) {
             return res.status(400).json({ message: "La liste d'ingrédients est requise" });
         }
 
-        const added = await fridgeService.addIngredientsToFridge(fridgeId, ingredients);
+        const fridge = await fridgeService.getFridgeByUserId(userId);
+
+        const added = await fridgeService.addIngredientsToFridge(fridge.id, ingredients);
 
         res.status(201).json({
             message: "Ingrédients ajoutés au frigo avec succès",
@@ -27,13 +29,15 @@ exports.addIngredients = async (req, res) => {
 
 exports.getIngredients = async (req, res) => {
     try {
-        const { fridgeId } = req.params;
+        const userId = req.userId;
 
-        if (!fridgeId) {
+        const fridge = await fridgeService.getFridgeByUserId(userId);
+
+        if (!fridge) {
             return res.status(400).json({ message: "L'identifiant du frigo est requis" });
         }
 
-        const ingredients = await fridgeService.getIngredientsFromFridge(fridgeId);
+        const ingredients = await fridgeService.getIngredientsFromFridge(fridge.id);
 
         return res.status(200).json({
             message: "Ingrédients récupérés avec succès",
@@ -51,21 +55,19 @@ exports.getIngredients = async (req, res) => {
 
 exports.getIngredientsByCategory = async (req, res) => {
     try {
-        const { fridgeId } = req.params;
-
-        if (!fridgeId) {
-            return res.status(400).json({ message: "L'identifiant du frigo est requis" });
-        }
-
+        const userId = req.userId;
         const { category } = req.query;
 
+        const fridge = await fridgeService.getFridgeByUserId(userId);
+
+        if (!fridge) {
+            return res.status(404).json({ message: "Frigo introuvable" });
+        }
         if (!category) {
-            return res.status(400).json({
-                message: "Le paramètre de catégorie est requis (ex: ?category=fromagerie)"
-            });
+            return res.status(400).json({ message: "Le paramètre category est requis" });
         }
 
-        const ingredients = await fridgeService.getIngredientsByCategory(fridgeId, category);
+        const ingredients = await fridgeService.getIngredientsByCategory(fridge.id, category);
 
         return res.status(200).json({
             message: `Ingrédients de la catégorie '${category}' récupérés avec succès`,
@@ -83,9 +85,12 @@ exports.getIngredientsByCategory = async (req, res) => {
 
 exports.removeIngredient = async (req, res) => {
     try {
+        const userId = req.userId;
         const { ingredientId } = req.params;
 
-        const deletedIngredient = await fridgeService.removeIngredientFromFridge(ingredientId);
+        const fridge = await fridgeService.getFridgeByUserId(userId);
+
+        const deletedIngredient = await fridgeService.removeIngredientFromFridge(fridge.id, ingredientId);
 
         if (!deletedIngredient) {
             return res.status(404).json({

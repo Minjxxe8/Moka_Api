@@ -1,12 +1,12 @@
 const express = require("express");
 const fridge = require("../controllers/FridgeController.js");
-const {getIngredients} = require("../controllers/FridgeController");
 const router = express.Router();
+const authMiddleware = require("../middlewares/AuthMiddleware");
 
-router.post("/:fridgeId/ingredients", fridge.addIngredients);
-router.get("/:fridgeId/ingredients", fridge.getIngredients);
-router.get("/:fridgeId/ingredients/category", fridge.getIngredientsByCategory);
-router.delete("/ingredient/:ingredientId", fridge.removeIngredient);
+router.post("/ingredients", authMiddleware, fridge.addIngredients);
+router.get("/ingredients", authMiddleware, fridge.getIngredients);
+router.get("/ingredients/category",authMiddleware, fridge.getIngredientsByCategory);
+router.delete("/ingredient/:ingredientId", authMiddleware, fridge.removeIngredient);
 
 module.exports = (app) => {
     app.use("/fridge", router);

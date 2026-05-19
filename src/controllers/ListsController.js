@@ -3,7 +3,9 @@ const fridgeService = require('../services/FridgeService');
 
 exports.saveList = async (req, res) => {
     try {
-        const { userId, listName, ingredientsIds } = req.body;
+
+        const userId = req.userId;
+        const { listName, ingredientsIds } = req.body;
 
         const list = await listService.createList(userId, listName, ingredientsIds);
 
@@ -19,10 +21,20 @@ exports.saveList = async (req, res) => {
 
 exports.completeShopping = async (req, res) => {
     try {
-        const { userId, listId } = req.body;
+        const userId = req.userId;
+        const { listId } = req.body;
+
+        const list = await listService.getListById(listId);
+
+        if (!list) return res.status(404).json({
+            message: "Liste non trouvée"
+        });
+
+        if (list.user_id !== userId) return res.status(403).json({
+            message: "Accès interdit"
+        })
 
         const fridge = await fridgeService.getFridgeByUserId(userId);
-
         const result = await listService.migrateListToFridge(userId, listId, fridge.id);
 
         res.status(200).json({
@@ -36,7 +48,7 @@ exports.completeShopping = async (req, res) => {
 
 exports.getUserLists = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.userId;
 
         if (!userId) {
             return res.status(400).json({ message: "L'UUID de l'utilisateur est requis" });
@@ -55,13 +67,18 @@ exports.getUserLists = async (req, res) => {
 
 exports.getOneList = async (req, res) => {
     try {
+        const userId = req.userId;
         const { listId } = req.params;
 
         const list = await listService.getListById(listId);
 
-        if (!list) {
-            return res.status(404).json({ message: "Liste non trouvée" });
-        }
+        if (!list) return res.status(404).json({
+            message: "Liste non trouvée"
+        });
+
+        if (list.user_id !== userId) return res.status(403).json({
+            message: "Accès interdit"
+        })
 
         res.status(200).json(list);
     } catch (error) {
@@ -74,13 +91,23 @@ exports.getOneList = async (req, res) => {
 
 exports.deleteList = async (req, res) => {
     try {
-        const { listId } = req.params;
-        const { userId } = req.query;
+        const userId = req.userId;
+        const listId = req.params.listId;
+
+        const list = await listService.getListById(listId);
+
+        if (!list) return res.status(404).json({
+            message: "Liste non trouvée"
+        });
+
+        if (list.user_id !== userId) return res.status(403).json({
+            message: "Accès interdit"
+        })
 
         const deleted = await listService.deleteList(listId, userId);
 
         if (deleted === 0) {
-            return res.status(404).json({ message: "Liste non trouvée ou non autorisée" });
+            return res.status(404).json({ message: "Liste non trouvée" });
         }
 
         res.status(200).json({ message: "Liste supprimée avec succès" });
@@ -94,8 +121,19 @@ exports.deleteList = async (req, res) => {
 
 exports.updateList = async (req, res) => {
     try {
+        const userId = req.userId;
         const { listId } = req.params;
-        const { userId, listName, ingredientsIds } = req.body;
+        const { listName, ingredientsIds } = req.body;
+
+        const list = await listService.getListById(listId);
+
+        if (!list) return res.status(404).json({
+            message: "Liste non trouvée"
+        });
+
+        if (list.user_id !== userId) return res.status(403).json({
+            message: "Accès interdit"
+        })
 
         const result = await listService.updateList(listId, userId, listName, ingredientsIds);
 
