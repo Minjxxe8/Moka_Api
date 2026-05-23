@@ -13,6 +13,7 @@ const ingredientRoutes = require("./src/routes/IngredientRoutes");
 const fridgeRoutes = require("./src/routes/FridgeRoutes");
 const listsIngredientsRoutes = require("./src/routes/ListsRoutes");
 const recipeSearchRoutes = require("./src/routes/SearchRoutes");
+const homeRoutes = require("./src/routes/HomeRoutes");
 
 userRoutes(app);
 authRoutes(app);
@@ -20,6 +21,7 @@ ingredientRoutes(app)
 fridgeRoutes(app)
 listsIngredientsRoutes(app)
 recipeSearchRoutes(app)
+homeRoutes(app)
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Route not found' });
