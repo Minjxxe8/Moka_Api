@@ -14,6 +14,7 @@ models.Recipe = require("./RecipeModel")(sequelize);
 models.RecipeCategory = require("./RecipeCategoryModel")(sequelize);
 models.Category = require("./CategoryModel")(sequelize);
 models.RecipeIngredient = require("./RecipeIngredientModel")(sequelize);
+models.Favorite = require("./FavoriteModel")(sequelize);
 
 
 Object.keys(models).forEach((modelName) => {
