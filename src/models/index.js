@@ -13,6 +13,7 @@ models.Lists = require("./ListsModel")(sequelize);
 models.Recipe = require("./RecipeModel")(sequelize);
 models.RecipeCategory = require("./RecipeCategoryModel")(sequelize);
 models.Category = require("./CategoryModel")(sequelize);
+models.RecipeIngredient = require("./RecipeIngredientModel")(sequelize);
 
 
 Object.keys(models).forEach((modelName) => {

@@ -43,3 +43,28 @@ exports.searchByCategories = async (req, res) => {
         });
     }
 };
+
+exports.globalSearch = async (req, res) => {
+    try {
+        const { q } = req.query;
+
+        if (!q || q.trim().length < 2) {
+            return res.status(400).json({ message: "Le paramètre 'q' est requis (min. 2 caractères)" });
+        }
+
+        const recipes = await recipeSearchService.searchRecipes(q);
+
+        return res.status(200).json({
+            message: "Résultats de recherche",
+            query: q,
+            count: recipes.length,
+            recipes,
+        });
+    } catch (error) {
+        console.error("Erreur lors de la recherche :", error);
+        return res.status(500).json({
+            message: "Erreur lors de la recherche",
+            error: error.message,
+        });
+    }
+};
