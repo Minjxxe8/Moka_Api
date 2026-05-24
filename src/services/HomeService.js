@@ -89,7 +89,6 @@ async function getUserRecentFavorites(userId) {
     const favorites = await Favorite.findAll({
         where: { profile_id: userId },
         order: [["id", "DESC"]],
-        limit: 5,
         attributes: ["recipe_id"],
     });
 
