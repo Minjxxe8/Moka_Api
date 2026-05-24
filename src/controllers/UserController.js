@@ -34,3 +34,23 @@ exports.deleteAccount = async (req, res) => {
         });
     }
 };
+
+exports.getMe = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = await userService.findOne(userId);
+        if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
+
+        const { Recipe } = require("../models");
+        const recipeCount = await Recipe.count({ where: { author: user.id } });
+
+        res.status(200).json({
+            user: {
+                ...user,
+                recipeCount,
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la récupération du profil", error: error.message });
+    }
+};
