@@ -4,6 +4,7 @@ const ingredient = require("../controllers/IngredientController.js");
 const router = express.Router();
 
 router.post("/create", ingredient.create);
+router.get("/search", ingredient.search);
 
 
 module.exports = (app) => {
